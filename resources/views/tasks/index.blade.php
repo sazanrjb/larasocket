@@ -77,6 +77,5 @@
     </form>
   </div>
 </div>
-<script src="/socket/socket.js"></script>
 </body>
 </html>

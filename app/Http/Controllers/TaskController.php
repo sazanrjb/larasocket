@@ -27,14 +27,20 @@ class TaskController extends Controller
         return view('tasks.index');
     }
 
+    public function getAll()
+    {
+        return $this->task->latest()->get();
+    }
+
     public function store(Request $request)
     {
         $task = $this->task->create($request->all());
         $users = $this->user->all();
+        $user = $this->user->first();
 
-        event(new TaskCreated($task));
+        event(new TaskCreated($task, $user));
 
-        Notification::send($users, new TaskCreatedNotification($task));
+        Notification::send($users, new TaskCreatedNotification($task, $user));
 
         Session::flash('notice', 'Task Successfully created! Check your mail.');
         return redirect()->back();

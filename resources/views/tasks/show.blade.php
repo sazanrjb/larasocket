@@ -55,7 +55,7 @@
 <div>
   <div class="container text-center">
     <br>
-    <a href="/tasks">Back to Task</a>
+    <a href="/notifications">Back to Notifications</a>
     <h4 class="title">{{$task->title}}</h4>
     <p class="flex-center">{{$task->description}}</p>
   </div>

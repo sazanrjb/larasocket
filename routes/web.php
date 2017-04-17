@@ -15,5 +15,9 @@ $router->get('/', function () {
     return view('welcome');
 });
 
+$router->get('tasks/get-all', 'TaskController@getAll');
 $router->resource('tasks', 'TaskController');
+$router->get('notifications', 'NotificationController@index');
+$router->get('notifications/get-all', 'NotificationController@getAll');
+$router->get('notifications/read', 'NotificationController@readAllNotification');
 $router->resource('users', 'UserController');

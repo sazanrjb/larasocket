@@ -9,14 +9,13 @@
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css"/>
   <!-- Styles -->
   <style>
     html, body {
-      background-color: #fff;
-      color: #636b6f;
       font-family: 'Raleway', sans-serif;
-      font-weight: 500;
+      background: #ebe9e7;
       height: 100vh;
       margin: 0;
     }
@@ -49,16 +48,6 @@
       font-size: 84px;
     }
 
-    .links > a {
-      color: #636b6f;
-      padding: 0 25px;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .1rem;
-      text-decoration: none;
-      text-transform: uppercase;
-    }
-
     .m-b-md {
       margin-bottom: 30px;
     }
@@ -69,23 +58,45 @@
 
     li {
       list-style-type: none;
-      background: rgba(238, 238, 238, 0.35);
+      background: #fff;
       padding: 20px;
+      border-bottom: 1px solid #dddfe2;
+    }
+
+    li.active {
+      background: #edf2fa;
+    }
+
+    a {
+      font-weight: 700;
+    }
+
+    h3 {
+      font-weight:800;
+    }
+
+    h5 {
+      font-weight: 600;
     }
   </style>
 </head>
 <body>
 <div id="app" v-cloak>
-  <h1 class="content">Tasks</h1>
-  <div class="row">
-    <h2 class="content">Notification List</h2>
-    <ul>
-      <li v-if="tasks.length" v-for="task in tasks">
-        <h3>@{{ task.title }}</h3>
-        <h5>@{{ task.description }}</h5>
-        <hr>
+  <h1 class="content">Notifications</h1>
+  <div class="container">
+    <ul v-if="notifications.length">
+      <li>
+        <a @click="readAllNotification()" href="javascript:void(0)">Mark all notifications as read</a> <strong>&middot;</strong>
+        <a href="javascript:void(0)" @click="fetchNotifications">Refresh</a>
       </li>
-      <li v-else>No Notifications</li>
+      <li v-for="notification in notifications" :class="{active: notification.read_at == null}">
+        <h4><a :href="notification.data.url">@{{ notification.data.notificationMessage }}</a></h4>
+        <h5>@{{ notification.data.description }}</h5>
+      </li>
+      <hr>
+    </ul>
+    <ul v-else>
+      <li>No Notifications</li>
     </ul>
   </div>
 </div>
@@ -114,7 +125,7 @@
     el: '#app',
 
     data: {
-      tasks: [],
+      notifications: [],
       user: {},
     },
 
@@ -129,25 +140,35 @@
           });
 
           notification.onclick = function() {
-            window.open('/tasks/' + data.task.id);
+            window.open('/notifications/' + data.task.id);
           };
         }
 
+      },
+
+      readAllNotification: function() {
+        axios.get('/notifications/read')
+                .then(function(response) {
+                  if(response.data.status == true) {
+                    this.fetchNotifications();
+                  }
+                }.bind(this));
+      },
+
+      fetchNotifications: function() {
+        axios.get('/notifications/get-all')
+                .then(function(response) {
+                  this.notifications = response.data;
+                }.bind(this));
       }
     },
     mounted: function() {
       socket.on('testChannel:App\\Events\\TaskCreated', function(data) {
-        this.tasks.unshift(data.task);
-        this.user = data.user;
-
+        toastr.success('', data.user.name + ' created a new notification, ' + data.task.title);
         this.notifyMe(data);
-        toastr.success('', data.user.name + ' created a new Task, ' + data.task.title)
       }.bind(this));
 
-      axios.get('tasks/get-all')
-              .then(function(response) {
-                this.tasks = response.data;
-              }.bind(this));
+      this.fetchNotifications();
     }
   });
 </script>
