@@ -21,3 +21,7 @@ $router->get('notifications', 'NotificationController@index');
 $router->get('notifications/get-all', 'NotificationController@getAll');
 $router->get('notifications/read', 'NotificationController@readAllNotification');
 $router->resource('users', 'UserController');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');

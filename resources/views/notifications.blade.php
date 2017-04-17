@@ -59,7 +59,7 @@
     li {
       list-style-type: none;
       background: #fff;
-      padding: 20px;
+      padding: 10px;
       border-bottom: 1px solid #dddfe2;
     }
 
@@ -69,6 +69,11 @@
 
     a {
       font-weight: 700;
+      color: #1d2129;
+    }
+
+    h4 {
+      font-size: 15px;
     }
 
     h3 {
@@ -77,6 +82,23 @@
 
     h5 {
       font-weight: 600;
+      font-size:12px;
+    }
+    .description {
+      color: #7d7272;
+    }
+    
+    .container li:hover {
+      background-color: #f3f3f3;
+    }
+
+    .logo {
+      height: 57px;
+      float:left;
+    }
+
+    .notif_body {
+      margin-left: 70px;
     }
   </style>
 </head>
@@ -90,8 +112,11 @@
         <a href="javascript:void(0)" @click="fetchNotifications">Refresh</a>
       </li>
       <li v-for="notification in notifications" :class="{active: notification.read_at == null}">
-        <h4><a :href="notification.data.url">@{{ notification.data.notificationMessage }}</a></h4>
-        <h5>@{{ notification.data.description }}</h5>
+        <img src="/images/agentcis_invert.png" alt="" class="logo"/>
+        <div class="notif_body">
+          <h4><a :href="notification.data.url">@{{ notification.data.notificationMessage }}</a></h4>
+          <h5 class="description">@{{ notification.data.description }}</h5>
+        </div>
       </li>
       <hr>
     </ul>
